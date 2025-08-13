@@ -11,8 +11,6 @@
   "dependencies": {
     "@vueuse/core": "^10.9.0",
     "element-plus": "^2.6.1",
-    "html2canvas": "^1.4.1",
-    "jspdf": "^3.0.1",
     "sortablejs": "^1.15.6",
     "vue": "^3.4.21"
   },
