@@ -23,14 +23,7 @@
         
         <el-table-column label="项目名称" prop="name">
           <template #default="{ row }">
-            <el-select v-model="row.name" :filterable="true" :allow-create="true" placeholder="选择项目名称" clearable :class="{ 'is-error': !row.name }" @change="validateItem(row)">
-              <el-option
-                v-for="item in projectOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
+            <el-input v-model="row.name"  placeholder="输入项目名称"></el-input>
           </template>
         </el-table-column>
 
@@ -88,14 +81,7 @@
         
         <el-table-column label="项目名称" prop="name">
           <template #default="{ row }">
-            <el-select v-model="row.name" :filterable="true" :allow-create="true" :class="{ 'is-error': !row.name }" @change="validateItem(row)">
-              <el-option
-                v-for="item in projectOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
+            <el-input v-model="row.name"  placeholder="输入项目名称"></el-input>
           </template>
         </el-table-column>
 
@@ -172,17 +158,6 @@ const validateItem = (item) => {
   }
   return true
 }
-
-const projectOptions = [
-  { value: '墙面', label: '墙面' },
-  { value: '地面', label: '地面' },
-  { value: '天花板', label: '天花板' },
-  { value: '门窗', label: '门窗' },
-  { value: '家具', label: '家具' },
-  { value: '电器', label: '电器' },
-  { value: '灯具', label: '灯具' },
-  { value: '其他', label: '其他' },
-]
 
 const essentialItems = ref([])
 const nonEssentialItems = ref([])
