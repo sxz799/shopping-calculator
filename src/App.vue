@@ -10,119 +10,123 @@
         </div>
       </template>
       
-      <div class="section-header">
-        <div class="section-title">必要项目</div>
-        <el-button type="success" @click="addItem(true)" plain>添加项目</el-button>
-      </div>
-      <el-table :data="essentialItems" row-key="id" class="items-table essential-table">
-        <el-table-column width="40">
-          <template #default="{ row }">
-            <el-icon class="drag-handle"><Rank /></el-icon>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="项目名称" prop="name">
-          <template #default="{ row }">
-            <el-input v-model="row.name"  placeholder="输入项目名称"></el-input>
-          </template>
-        </el-table-column>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-card class="item-card">
+            <template #header>
+              <div class="card-header">
+                <div class="section-title">必要项目</div>
+                <el-button type="success" @click="addItem(true)" plain>添加项目</el-button>
+              </div>
+            </template>
+            <el-table :data="essentialItems" row-key="id" class="items-table essential-table">
+              <el-table-column width="40">
+                <template #default="{ row }">
+                  <el-icon class="drag-handle"><Rank /></el-icon>
+                </template>
+              </el-table-column>
+              
+              <el-table-column label="项目名称" prop="name" width="auto">
+                <template #default="{ row }">
+                  <el-input v-model="row.name"  placeholder="输入项目名称"></el-input>
+                </template>
+              </el-table-column>
 
-        <el-table-column label="产品型号" prop="model">
-          <template #default="{ row }">
-            <el-input v-model="row.model"  placeholder="输入产品型号"></el-input>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="数量" width="auto">
-          <template #default="{ row }">
-            <el-input-number v-model="row.quantity" :min="0" :step="1" @change="validateNumber(row, 'quantity')"></el-input-number>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="单价" width="auto">
-          <template #default="{ row }">
-            <el-input-number v-model="row.price" :min="0" :precision="2" :step="0.01" @change="validateNumber(row, 'price')"></el-input-number>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="小计" width="auto">
-          <template #default="{ row }">
-            <span>{{ (row.quantity * row.price).toFixed(2) }}</span>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="操作" width="120">
-          <template #default="{ row, $index }">
-            <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(true, $index)" confirm-button-text="确定" cancel-button-text="取消">
-              <template #reference>
-                <el-button type="danger">删除</el-button>
-              </template>
-            </el-popconfirm>
-          </template>
-        </el-table-column>
-      </el-table>
-      
-      <div class="section-total">
-        必要项目总计: ¥{{ essentialTotal.toFixed(2) }}
-      </div>
+              <el-table-column label="产品型号" prop="model" width="auto">
+                <template #default="{ row }">
+                  <el-input v-model="row.model"  placeholder="输入产品型号"></el-input>
+                </template>
+              </el-table-column>
+              
+              <el-table-column label="数量" width="auto">
+                <template #default="{ row }">
+                  <el-input-number  controls-position="right" v-model="row.quantity" :min="0" :step="1" @change="validateNumber(row, 'quantity')"></el-input-number>
+                </template>
+              </el-table-column>
+              
+              <el-table-column label="单价" width="auto">
+                <template #default="{ row }">
+                  <el-input-number  controls-position="right" v-model="row.price" :min="0" :step="1" @change="validateNumber(row, 'price')"></el-input-number>
+                </template>
+              </el-table-column>
+              
+              
+              <el-table-column label="操作"  :width="80">
+                <template #default="{ row, $index }">
+                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(true, $index)" confirm-button-text="确定" cancel-button-text="取消">
+                    <template #reference>
+                      <el-button size="small" type="danger">删除</el-button>
+                    </template>
+                  </el-popconfirm>
+                </template>
+              </el-table-column>
+            </el-table>
+            
+            <div class="section-total">
+              必要项目总计: ¥{{ essentialTotal.toFixed(2) }}
+            </div>
+          </el-card>
+        </el-col>
+
+        <el-col :span="12">
+          <el-card class="item-card">
+            <template #header>
+              <div class="card-header">
+                <div class="section-title">非必要项目</div>
+                <el-button type="warning" @click="addItem(false)" plain>添加项目</el-button>
+              </div>
+            </template>
+            <el-table :data="nonEssentialItems" row-key="id" class="items-table non-essential-table">
+              <el-table-column width="40">
+                <template #default="{ row }">
+                  <el-icon class="drag-handle"><Rank /></el-icon>
+                </template>
+              </el-table-column>
+              
+              <el-table-column label="项目名称" prop="name">
+                <template #default="{ row }">
+                  <el-input v-model="row.name"  placeholder="输入项目名称"></el-input>
+                </template>
+              </el-table-column>
+
+              <el-table-column label="产品型号" prop="model">
+                <template #default="{ row }">
+                  <el-input v-model="row.model" placeholder="输入产品型号"></el-input>
+                </template>
+              </el-table-column>
+              
+              <el-table-column label="数量" width="auto">
+                <template #default="{ row }">
+                  <el-input-number controls-position="right" v-model="row.quantity" :min="0" :step="1" @change="validateNumber(row, 'quantity')"></el-input-number>
+                </template>
+              </el-table-column>
+              
+              <el-table-column label="单价" width="auto">
+                <template #default="{ row }">
+                  <el-input-number controls-position="right" v-model="row.price" :min="0" :step="1" @change="validateNumber(row, 'price')"></el-input-number>
+                </template>
+              </el-table-column>
+              
+            
+              <el-table-column label="操作" :width="80">
+                <template #default="{ row, $index }">
+                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(false, $index)" confirm-button-text="确定" cancel-button-text="取消">
+                    <template #reference>
+                      <el-button  type="danger">删除</el-button>
+                    </template>
+                  </el-popconfirm>
+                </template>
+              </el-table-column>
+            </el-table>
+            
+            <div class="section-total">
+              非必要项目总计: ¥{{ nonEssentialTotal.toFixed(2) }}
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
 
       <div class="section-divider"></div>
-
-      <div class="section-header">
-        <div class="section-title">非必要项目</div>
-        <el-button type="warning" @click="addItem(false)" plain>添加项目</el-button>
-      </div>
-      <el-table :data="nonEssentialItems" row-key="id" class="items-table non-essential-table">
-        <el-table-column width="40">
-          <template #default="{ row }">
-            <el-icon class="drag-handle"><Rank /></el-icon>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="项目名称" prop="name">
-          <template #default="{ row }">
-            <el-input v-model="row.name"  placeholder="输入项目名称"></el-input>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="产品型号" prop="model">
-          <template #default="{ row }">
-            <el-input v-model="row.model" placeholder="输入产品型号"></el-input>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="数量" width="auto">
-          <template #default="{ row }">
-            <el-input-number v-model="row.quantity" :min="0" :step="1" @change="validateNumber(row, 'quantity')"></el-input-number>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="单价" width="auto">
-          <template #default="{ row }">
-            <el-input-number v-model="row.price" :min="0" :precision="2" :step="0.01" @change="validateNumber(row, 'price')"></el-input-number>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="小计" width="auto">
-          <template #default="{ row }">
-            <span>{{ (row.quantity * row.price).toFixed(2) }}</span>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="操作" width="120">
-          <template #default="{ row, $index }">
-            <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(false, $index)" confirm-button-text="确定" cancel-button-text="取消">
-              <template #reference>
-                <el-button type="danger">删除</el-button>
-              </template>
-            </el-popconfirm>
-          </template>
-        </el-table-column>
-      </el-table>
-      
-      <div class="section-total">
-        非必要项目总计: ¥{{ nonEssentialTotal.toFixed(2) }}
-      </div>
 
       <div class="final-total-section">
         <h3>最终总计: ¥{{ finalTotal.toFixed(2) }}</h3>
@@ -162,6 +166,13 @@ const validateItem = (item) => {
 const essentialItems = ref([])
 const nonEssentialItems = ref([])
 
+// 处理拖动排序
+const handleSort = (list, event) => {
+  const { oldIndex, newIndex } = event
+  const movedItem = list.splice(oldIndex, 1)[0]
+  list.splice(newIndex, 0, movedItem)
+}
+
 // 从本地存储加载数据
 const loadItems = () => {
   const savedData = localStorage.getItem(STORAGE_KEY)
@@ -183,6 +194,22 @@ const saveItems = () => {
 
 // 监听数据变化，自动保存
 watch([essentialItems, nonEssentialItems], saveItems, { deep: true })
+
+onMounted(() => {
+  loadItems()
+  // 初始化必要项目拖拽
+  new Sortable(document.querySelector('.essential-table .el-table__body > tbody'), {
+    animation: 150,
+    handle: '.drag-handle',
+    onEnd: (event) => handleSort(essentialItems.value, event)
+  })
+  // 初始化非必要项目拖拽
+  new Sortable(document.querySelector('.non-essential-table .el-table__body > tbody'), {
+    animation: 150,
+    handle: '.drag-handle',
+    onEnd: (event) => handleSort(nonEssentialItems.value, event)
+  })
+})
 
 const addItem = (isEssential) => {
   const newItem = {
@@ -273,9 +300,7 @@ onMounted(() => {
 
 <style scoped>
 .calculator-container {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 0 20px;
+  padding: 0;
 }
 
 .calculator-card {
