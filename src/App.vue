@@ -15,11 +15,11 @@
           <el-card class="item-card">
             <template #header>
               <div class="card-header">
-                <div class="section-title">必要项目</div>
+                <div class="essential-section-title">必要项目</div>
                 <el-button type="success" @click="addItem(true)" plain>添加项目</el-button>
               </div>
             </template>
-            <el-table :data="essentialItems" row-key="id" class="items-table essential-table">
+            <el-table :data="essentialItems" row-key="id" class="items-table essential-table" @sort-change="(column) => handleSortChange(essentialItems, column)">
               <el-table-column width="40">
                 <template #default="{ row }">
                   <el-icon class="drag-handle"><Rank /></el-icon>
@@ -44,7 +44,7 @@
                 </template>
               </el-table-column>
               
-              <el-table-column label="单价" width="auto">
+              <el-table-column label="单价" prop="price" sortable width="auto">
                 <template #default="{ row }">
                   <el-input-number  controls-position="right" v-model="row.price" :min="0" :step="1" @change="validateNumber(row, 'price')"></el-input-number>
                 </template>
@@ -72,11 +72,11 @@
           <el-card class="item-card">
             <template #header>
               <div class="card-header">
-                <div class="section-title">非必要项目</div>
+                <div class="non-essential-section-title">非必要项目</div>
                 <el-button type="warning" @click="addItem(false)" plain>添加项目</el-button>
               </div>
             </template>
-            <el-table :data="nonEssentialItems" row-key="id" class="items-table non-essential-table">
+            <el-table :data="nonEssentialItems" row-key="id" class="items-table non-essential-table" @sort-change="(column) => handleSortChange(nonEssentialItems, column)">
               <el-table-column width="40">
                 <template #default="{ row }">
                   <el-icon class="drag-handle"><Rank /></el-icon>
@@ -101,7 +101,7 @@
                 </template>
               </el-table-column>
               
-              <el-table-column label="单价" width="auto">
+              <el-table-column label="单价" prop="price" sortable width="auto">
                 <template #default="{ row }">
                   <el-input-number controls-position="right" v-model="row.price" :min="0" :step="1" @change="validateNumber(row, 'price')"></el-input-number>
                 </template>
@@ -112,7 +112,7 @@
                 <template #default="{ row, $index }">
                   <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(false, $index)" confirm-button-text="确定" cancel-button-text="取消">
                     <template #reference>
-                      <el-button  type="danger">删除</el-button>
+                      <el-button size="small" type="danger">删除</el-button>
                     </template>
                   </el-popconfirm>
                 </template>
@@ -165,6 +165,21 @@ const validateItem = (item) => {
 
 const essentialItems = ref([])
 const nonEssentialItems = ref([])
+
+// 处理表格排序
+const handleSortChange = (list, { prop, order }) => {
+  if (prop === 'price') {
+    list.sort((a, b) => {
+      if (order === 'ascending') {
+        return a.price - b.price;
+      } else if (order === 'descending') {
+        return b.price - a.price;
+      } else {
+        return 0;
+      }
+    });
+  }
+};
 
 // 处理拖动排序
 const handleSort = (list, event) => {
@@ -325,7 +340,13 @@ onMounted(() => {
   margin: 20px 0 10px;
 }
 
-.section-title {
+.essential-section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color:rgb(255, 0, 0);
+}
+
+.non-essential-section-title {
   font-size: 18px;
   font-weight: bold;
   color: #409EFF;
@@ -349,14 +370,14 @@ onMounted(() => {
 }
 
 .final-total-section {
-  text-align: right;
+  text-align: center;
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 2px solid #409EFF;
+  border-top: 2px solid rgb(126, 195, 162);
 }
 
 .final-total-section h3 {
-  color: #409EFF;
+  color:rgb(17, 192, 232);
   margin: 0;
   font-size: 20px;
 }
