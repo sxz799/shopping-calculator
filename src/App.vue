@@ -40,17 +40,22 @@
               
               <el-table-column label="数量" width="auto">
                 <template #default="{ row }">
-                  <el-input-number  controls-position="right" v-model="row.quantity" :min="0" :step="1" @change="validateNumber(row, 'quantity')"></el-input-number>
+                  <el-input-number  v-model="row.quantity" :min="0" :step="1" @change="validateNumber(row, 'quantity')"></el-input-number>
                 </template>
               </el-table-column>
               
               <el-table-column label="单价" prop="price" sortable width="auto">
                 <template #default="{ row }">
-                  <el-input-number  controls-position="right" v-model="row.price" :min="0" :step="1" @change="validateNumber(row, 'price')"></el-input-number>
+                  <el-input type="number"  v-model="row.price"  @change="validateNumber(row, 'price')"></el-input>
                 </template>
               </el-table-column>
               
               
+              <el-table-column label="已购" width="60">
+                <template #default="{ row }">
+                  <el-checkbox v-model="row.purchased"></el-checkbox>
+                </template>
+              </el-table-column>
               <el-table-column label="操作"  :width="80">
                 <template #default="{ row, $index }">
                   <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(true, $index)" confirm-button-text="确定" cancel-button-text="取消">
@@ -63,7 +68,9 @@
             </el-table>
             
             <div class="section-total">
-              必要项目总计: ¥{{ essentialTotal.toFixed(2) }}
+              <h3>已支出: ¥{{ essentialTotal.toFixed(2) }}</h3>
+              <h3>未支出: ¥{{ essentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0).toFixed(2) }}</h3>
+              <h3>全部总计: ¥{{ essentialItems.reduce((sum, item) => sum + (item.quantity * item.price), 0).toFixed(2) }}</h3>
             </div>
           </el-card>
         </el-col>
@@ -97,17 +104,22 @@
               
               <el-table-column label="数量" width="auto">
                 <template #default="{ row }">
-                  <el-input-number controls-position="right" v-model="row.quantity" :min="0" :step="1" @change="validateNumber(row, 'quantity')"></el-input-number>
+                  <el-input-number   v-model="row.quantity" :min="0" :step="1" @change="validateNumber(row, 'quantity')"></el-input-number>
                 </template>
               </el-table-column>
               
               <el-table-column label="单价" prop="price" sortable width="auto">
                 <template #default="{ row }">
-                  <el-input-number controls-position="right" v-model="row.price" :min="0" :step="1" @change="validateNumber(row, 'price')"></el-input-number>
+                  <el-input type="number" v-model="row.price"  @change="validateNumber(row, 'price')"></el-input>
                 </template>
               </el-table-column>
               
             
+              <el-table-column label="已购" width="60">
+                <template #default="{ row }">
+                  <el-checkbox v-model="row.purchased"></el-checkbox>
+                </template>
+              </el-table-column>
               <el-table-column label="操作" :width="80">
                 <template #default="{ row, $index }">
                   <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(false, $index)" confirm-button-text="确定" cancel-button-text="取消">
@@ -120,7 +132,10 @@
             </el-table>
             
             <div class="section-total">
-              非必要项目总计: ¥{{ nonEssentialTotal.toFixed(2) }}
+              <h3>已支出: ¥{{ nonEssentialTotal.toFixed(2) }}</h3>
+              <h3>未支出: ¥{{ nonEssentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0).toFixed(2) }}</h3>
+              <h3>全部总计: ¥{{ nonEssentialItems.reduce((sum, item) => sum + (item.quantity * item.price), 0).toFixed(2) }}</h3>
+              
             </div>
           </el-card>
         </el-col>
@@ -129,7 +144,9 @@
       <div class="section-divider"></div>
 
       <div class="final-total-section">
-        <h3>最终总计: ¥{{ finalTotal.toFixed(2) }}</h3>
+        <h3>全部总计: ¥{{ totalAllItems.toFixed(2) }}</h3>
+        <h3>已支出总计: ¥{{ finalTotal.toFixed(2) }}</h3>
+        <h3>未支出总计: ¥{{ totalUnpurchasedItems.toFixed(2) }}</h3>
       </div>
     </el-card>
   </div>
@@ -232,7 +249,8 @@ const addItem = (isEssential) => {
     name: '',
     model: '',
     quantity: 1.00,
-    price: 0.00
+    price: 0.00,
+    purchased: false // 新增的购买状态
   }
   
   if (isEssential) {
@@ -268,11 +286,49 @@ const clearAll = () => {
 }
 
 const essentialTotal = computed(() => {
-  return essentialItems.value.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+  return essentialItems.value.reduce((sum, item) => {
+    if (item.purchased) {
+      return sum + (item.quantity * item.price)
+    } else {
+      return sum
+    }
+  }, 0)
 })
 
 const nonEssentialTotal = computed(() => {
-  return nonEssentialItems.value.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+  return nonEssentialItems.value.reduce((sum, item) => {
+    if (item.purchased) {
+      return sum + (item.quantity * item.price)
+    } else {
+      return sum
+    }
+  }, 0)
+})
+
+// 计算所有项目的总价
+const totalAllItems = computed(() => {
+  const essentialAll = essentialItems.value.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+  const nonEssentialAll = nonEssentialItems.value.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+  return essentialAll + nonEssentialAll
+})
+
+// 计算未购买项目的总价
+const totalUnpurchasedItems = computed(() => {
+  const essentialUnpurchased = essentialItems.value.reduce((sum, item) => {
+    if (!item.purchased) {
+      return sum + (item.quantity * item.price)
+    } else {
+      return sum
+    }
+  }, 0)
+  const nonEssentialUnpurchased = nonEssentialItems.value.reduce((sum, item) => {
+    if (!item.purchased) {
+      return sum + (item.quantity * item.price)
+    } else {
+      return sum
+    }
+  }, 0)
+  return essentialUnpurchased + nonEssentialUnpurchased
 })
 
 const finalTotal = computed(() => {
