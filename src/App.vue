@@ -38,13 +38,13 @@
                 </template>
               </el-table-column>
               
-              <el-table-column label="数量" width="auto">
+              <el-table-column label="数量" width="90">
                 <template #default="{ row }">
-                  <el-input-number  v-model="row.quantity" :min="0" :step="1" @change="validateNumber(row, 'quantity')"></el-input-number>
+                  <el-input type="number"  v-model="row.quantity"  @change="validateNumber(row, 'quantity')"></el-input>
                 </template>
               </el-table-column>
               
-              <el-table-column label="单价" prop="price" sortable width="auto">
+              <el-table-column label="单价" prop="price" sortable width="120">
                 <template #default="{ row }">
                   <el-input type="number"  v-model="row.price"  @change="validateNumber(row, 'price')"></el-input>
                 </template>
@@ -68,9 +68,9 @@
             </el-table>
             
             <div class="section-total">
-              <h3>已支出: ¥{{ essentialTotal.toFixed(2) }}</h3>
-              <h3>未支出: ¥{{ essentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0).toFixed(2) }}</h3>
-              <h3>全部总计: ¥{{ essentialItems.reduce((sum, item) => sum + (item.quantity * item.price), 0).toFixed(2) }}</h3>
+              <h3>已支出: ¥{{ essentialTotal }}</h3>
+              <h3>未支出: ¥{{ essentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0) }}</h3>
+              <h3>全部总计: ¥{{ essentialItems.reduce((sum, item) => sum + (item.quantity * item.price), 0) }}</h3>
             </div>
           </el-card>
         </el-col>
@@ -102,15 +102,15 @@
                 </template>
               </el-table-column>
               
-              <el-table-column label="数量" width="auto">
+              <el-table-column label="数量" width="90">
                 <template #default="{ row }">
-                  <el-input-number   v-model="row.quantity" :min="0" :step="1" @change="validateNumber(row, 'quantity')"></el-input-number>
+                  <el-input type="number"  v-model="row.quantity"  @change="validateNumber(row, 'quantity')"></el-input>
                 </template>
               </el-table-column>
               
-              <el-table-column label="单价" prop="price" sortable width="auto">
+              <el-table-column label="单价" prop="price" sortable width="120">
                 <template #default="{ row }">
-                  <el-input type="number" v-model="row.price"  @change="validateNumber(row, 'price')"></el-input>
+                  <el-input type="number"  v-model="row.price"  @change="validateNumber(row, 'price')"></el-input>
                 </template>
               </el-table-column>
               
@@ -132,9 +132,9 @@
             </el-table>
             
             <div class="section-total">
-              <h3>已支出: ¥{{ nonEssentialTotal.toFixed(2) }}</h3>
-              <h3>未支出: ¥{{ nonEssentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0).toFixed(2) }}</h3>
-              <h3>全部总计: ¥{{ nonEssentialItems.reduce((sum, item) => sum + (item.quantity * item.price), 0).toFixed(2) }}</h3>
+              <h3>已支出: ¥{{ nonEssentialTotal }}</h3>
+              <h3>未支出: ¥{{ nonEssentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0) }}</h3>
+              <h3>全部总计: ¥{{ nonEssentialItems.reduce((sum, item) => sum + (item.quantity * item.price), 0) }}</h3>
               
             </div>
           </el-card>
@@ -144,9 +144,9 @@
       <div class="section-divider"></div>
 
       <div class="final-total-section">
-        <h3>全部总计: ¥{{ totalAllItems.toFixed(2) }}</h3>
-        <h3>已支出总计: ¥{{ finalTotal.toFixed(2) }}</h3>
-        <h3>未支出总计: ¥{{ totalUnpurchasedItems.toFixed(2) }}</h3>
+        <h3>全部总计: ¥{{ totalAllItems }}</h3>
+        <h3>已支出总计: ¥{{ finalTotal }}</h3>
+        <h3>未支出总计: ¥{{ totalUnpurchasedItems }}</h3>
       </div>
     </el-card>
   </div>
@@ -163,12 +163,10 @@ const STORAGE_KEY = 'shopping-calculator-items'
 
 const validateNumber = (item, field) => {
   if (item[field] < 0) {
-    item[field] = 0.00
+    item[field] = 0
     ElMessage.warning(`${field === 'quantity' ? '数量' : '价格'}不能小于0`)
     return false
   }
-  // 确保保留两位小数
-  item[field] = Number(item[field]).toFixed(2)
   return true
 }
 
