@@ -224,7 +224,7 @@ const loadItems = () => {
   //   essentialItems.value = essential || []
   //   nonEssentialItems.value = nonEssential || []
   // }
-  axios.get('https://vercel-redis-serveless.vercel.app/api/get?ket=' + STORAGE_KEY)
+  axios.get('https://redis.sxz799.asia/api/get?ket=' + STORAGE_KEY)
       .then(response => {
         const {essential, nonEssential} = response.data.value
         essentialItems.value = essential || []
@@ -246,7 +246,7 @@ const saveItems = () => {
   let key = STORAGE_KEY
   let value = JSON.stringify(data)
 
-  axios.post('https://vercel-redis-serveless.vercel.app/api/set', {
+  axios.post('https://redis.sxz799.asia/api/set', {
     key: key,
     value: value
   })
