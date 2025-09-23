@@ -247,16 +247,27 @@ const saveItems = () => {
     key: STORAGE_KEY,
     value: JSON.stringify(data)
   }).then(() => {
-        ElMessage.success('数据已保存')
-      })
-      .catch(error => {
-        console.error('保存数据失败:', error)
-        ElMessage.error('保存数据失败，请稍后重试')
-      })
+    ElMessage.success('数据已保存')
+  }).catch(error => {
+    console.error('保存数据失败:', error)
+    ElMessage.error('保存数据失败，请稍后重试')
+  })
 }
 
+function debounce(fn, delay) {
+  let timer = null
+  return function(...args) {
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      fn.apply(this, args)
+    }, delay)
+  }
+}
+
+const debouncedSaveItems = debounce(saveItems, 2000)
+
 // 监听数据变化，自动保存
-watch([essentialItems, nonEssentialItems], saveItems, {deep: true})
+watch([essentialItems, nonEssentialItems], debouncedSaveItems, {deep: true})
 
 onMounted(() => {
   loadItems()
