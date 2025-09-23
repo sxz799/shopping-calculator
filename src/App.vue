@@ -9,7 +9,7 @@
           </div>
         </div>
       </template>
-      
+
       <el-row :gutter="20">
         <el-col :span="12">
           <el-card class="item-card">
@@ -19,46 +19,50 @@
                 <el-button type="success" @click="addItem(true)" plain>添加项目</el-button>
               </div>
             </template>
-            <el-table :data="essentialItems" row-key="id" class="items-table essential-table" @sort-change="(column) => handleSortChange(essentialItems, column)">
+            <el-table :data="essentialItems" row-key="id" class="items-table essential-table"
+                      @sort-change="(column) => handleSortChange(essentialItems, column)">
               <el-table-column width="40">
                 <template #default="{ row }">
-                  <el-icon class="drag-handle"><Rank /></el-icon>
+                  <el-icon class="drag-handle">
+                    <Rank/>
+                  </el-icon>
                 </template>
               </el-table-column>
-              
+
               <el-table-column label="项目名称" prop="name" width="auto">
                 <template #default="{ row }">
-                  <el-input v-model="row.name"  placeholder="输入项目名称"></el-input>
+                  <el-input v-model="row.name" placeholder="输入项目名称"></el-input>
                 </template>
               </el-table-column>
 
               <el-table-column label="产品型号" prop="model" width="auto">
                 <template #default="{ row }">
-                  <el-input v-model="row.model"  placeholder="输入产品型号"></el-input>
+                  <el-input v-model="row.model" placeholder="输入产品型号"></el-input>
                 </template>
               </el-table-column>
-              
+
               <el-table-column label="数量" width="90">
                 <template #default="{ row }">
-                  <el-input type="number"  v-model="row.quantity"  @change="validateNumber(row, 'quantity')"></el-input>
+                  <el-input type="number" v-model="row.quantity" @change="validateNumber(row, 'quantity')"></el-input>
                 </template>
               </el-table-column>
-              
+
               <el-table-column label="单价" prop="price" sortable width="120">
                 <template #default="{ row }">
-                  <el-input type="number"  v-model="row.price"  @change="validateNumber(row, 'price')"></el-input>
+                  <el-input type="number" v-model="row.price" @change="validateNumber(row, 'price')"></el-input>
                 </template>
               </el-table-column>
-              
-              
+
+
               <el-table-column label="已购" width="60">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.purchased"></el-checkbox>
                 </template>
               </el-table-column>
-              <el-table-column label="操作"  :width="80">
+              <el-table-column label="操作" :width="80">
                 <template #default="{ row, $index }">
-                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(true, $index)" confirm-button-text="确定" cancel-button-text="取消">
+                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(true, $index)"
+                                 confirm-button-text="确定" cancel-button-text="取消">
                     <template #reference>
                       <el-button size="small" type="danger">删除</el-button>
                     </template>
@@ -66,10 +70,12 @@
                 </template>
               </el-table-column>
             </el-table>
-            
+
             <div class="section-total">
               <h3>已支出: ¥{{ essentialTotal }}</h3>
-              <h3>未支出: ¥{{ essentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0) }}</h3>
+              <h3>未支出: ¥{{
+                  essentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0)
+                }}</h3>
               <h3>全部总计: ¥{{ essentialItems.reduce((sum, item) => sum + (item.quantity * item.price), 0) }}</h3>
             </div>
           </el-card>
@@ -83,16 +89,19 @@
                 <el-button type="warning" @click="addItem(false)" plain>添加项目</el-button>
               </div>
             </template>
-            <el-table :data="nonEssentialItems" row-key="id" class="items-table non-essential-table" @sort-change="(column) => handleSortChange(nonEssentialItems, column)">
+            <el-table :data="nonEssentialItems" row-key="id" class="items-table non-essential-table"
+                      @sort-change="(column) => handleSortChange(nonEssentialItems, column)">
               <el-table-column width="40">
                 <template #default="{ row }">
-                  <el-icon class="drag-handle"><Rank /></el-icon>
+                  <el-icon class="drag-handle">
+                    <Rank/>
+                  </el-icon>
                 </template>
               </el-table-column>
-              
+
               <el-table-column label="项目名称" prop="name">
                 <template #default="{ row }">
-                  <el-input v-model="row.name"  placeholder="输入项目名称"></el-input>
+                  <el-input v-model="row.name" placeholder="输入项目名称"></el-input>
                 </template>
               </el-table-column>
 
@@ -101,20 +110,20 @@
                   <el-input v-model="row.model" placeholder="输入产品型号"></el-input>
                 </template>
               </el-table-column>
-              
+
               <el-table-column label="数量" width="90">
                 <template #default="{ row }">
-                  <el-input type="number"  v-model="row.quantity"  @change="validateNumber(row, 'quantity')"></el-input>
+                  <el-input type="number" v-model="row.quantity" @change="validateNumber(row, 'quantity')"></el-input>
                 </template>
               </el-table-column>
-              
+
               <el-table-column label="单价" prop="price" sortable width="120">
                 <template #default="{ row }">
-                  <el-input type="number"  v-model="row.price"  @change="validateNumber(row, 'price')"></el-input>
+                  <el-input type="number" v-model="row.price" @change="validateNumber(row, 'price')"></el-input>
                 </template>
               </el-table-column>
-              
-            
+
+
               <el-table-column label="已购" width="60">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.purchased"></el-checkbox>
@@ -122,7 +131,8 @@
               </el-table-column>
               <el-table-column label="操作" :width="80">
                 <template #default="{ row, $index }">
-                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(false, $index)" confirm-button-text="确定" cancel-button-text="取消">
+                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(false, $index)"
+                                 confirm-button-text="确定" cancel-button-text="取消">
                     <template #reference>
                       <el-button size="small" type="danger">删除</el-button>
                     </template>
@@ -130,12 +140,14 @@
                 </template>
               </el-table-column>
             </el-table>
-            
+
             <div class="section-total">
               <h3>已支出: ¥{{ nonEssentialTotal }}</h3>
-              <h3>未支出: ¥{{ nonEssentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0) }}</h3>
+              <h3>未支出: ¥{{
+                  nonEssentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0)
+                }}</h3>
               <h3>全部总计: ¥{{ nonEssentialItems.reduce((sum, item) => sum + (item.quantity * item.price), 0) }}</h3>
-              
+
             </div>
           </el-card>
         </el-col>
@@ -153,11 +165,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Rank } from '@element-plus/icons-vue'
+import {computed, onMounted, ref, watch} from 'vue'
+import {ElMessage, ElMessageBox} from 'element-plus'
+import {Rank} from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
 import Sortable from 'sortablejs'
+import axios from "axios";
 
 const STORAGE_KEY = 'shopping-calculator-items'
 
@@ -182,7 +195,7 @@ const essentialItems = ref([])
 const nonEssentialItems = ref([])
 
 // 处理表格排序
-const handleSortChange = (list, { prop, order }) => {
+const handleSortChange = (list, {prop, order}) => {
   if (prop === 'price') {
     list.sort((a, b) => {
       if (order === 'ascending') {
@@ -198,19 +211,29 @@ const handleSortChange = (list, { prop, order }) => {
 
 // 处理拖动排序
 const handleSort = (list, event) => {
-  const { oldIndex, newIndex } = event
+  const {oldIndex, newIndex} = event
   const movedItem = list.splice(oldIndex, 1)[0]
   list.splice(newIndex, 0, movedItem)
 }
 
 // 从本地存储加载数据
 const loadItems = () => {
-  const savedData = localStorage.getItem(STORAGE_KEY)
-  if (savedData) {
-    const { essential, nonEssential } = JSON.parse(savedData)
-    essentialItems.value = essential || []
-    nonEssentialItems.value = nonEssential || []
-  }
+  // const savedData = localStorage.getItem(STORAGE_KEY)
+  // if (savedData) {
+  //   const { essential, nonEssential } = JSON.parse(savedData)
+  //   essentialItems.value = essential || []
+  //   nonEssentialItems.value = nonEssential || []
+  // }
+  axios.get('https://vercel-redis-serveless.vercel.app/api/get?ket=' + STORAGE_KEY)
+      .then(response => {
+        const {essential, nonEssential} = response.data.value
+        essentialItems.value = essential || []
+        nonEssentialItems.value = nonEssential || []
+      })
+      .catch(error => {
+        console.error('加载数据失败:', error)
+        ElMessage.error('加载数据失败，请稍后重试')
+      })
 }
 
 // 保存数据到本地存储
@@ -219,11 +242,25 @@ const saveItems = () => {
     essential: essentialItems.value,
     nonEssential: nonEssentialItems.value
   }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  // localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  let key = STORAGE_KEY
+  let value = JSON.stringify(data)
+
+  axios.post('https://vercel-redis-serveless.vercel.app/api/set', {
+    key: key,
+    value: value
+  })
+      .then(() => {
+        ElMessage.success('数据已保存')
+      })
+      .catch(error => {
+        console.error('保存数据失败:', error)
+        ElMessage.error('保存数据失败，请稍后重试')
+      })
 }
 
 // 监听数据变化，自动保存
-watch([essentialItems, nonEssentialItems], saveItems, { deep: true })
+watch([essentialItems, nonEssentialItems], saveItems, {deep: true})
 
 onMounted(() => {
   loadItems()
@@ -250,7 +287,7 @@ const addItem = (isEssential) => {
     price: 0.00,
     purchased: false // 新增的购买状态
   }
-  
+
   if (isEssential) {
     essentialItems.value.push(newItem)
     ElMessage.success('已添加必要项目')
@@ -335,21 +372,21 @@ const finalTotal = computed(() => {
 
 onMounted(() => {
   loadItems()
-  
+
   const setupSortable = (el, items, isEssential) => {
     if (el) {
       Sortable.create(el, {
         handle: '.drag-handle',
         animation: 150,
         group: 'items',
-        onAdd({ newIndex, oldIndex, from, to }) {
+        onAdd({newIndex, oldIndex, from, to}) {
           const fromItems = from.classList.contains('essential-table') ? essentialItems : nonEssentialItems
           const toItems = to.classList.contains('essential-table') ? essentialItems : nonEssentialItems
           const movedItem = fromItems.value[oldIndex]
           fromItems.value.splice(oldIndex, 1)
           toItems.value.splice(newIndex, 0, movedItem)
         },
-        onEnd({ newIndex, oldIndex, from, to }) {
+        onEnd({newIndex, oldIndex, from, to}) {
           if (from === to) {
             const itemCopy = items.value[oldIndex]
             items.value.splice(oldIndex, 1)
@@ -397,7 +434,7 @@ onMounted(() => {
 .essential-section-title {
   font-size: 18px;
   font-weight: bold;
-  color:rgb(255, 0, 0);
+  color: rgb(255, 0, 0);
 }
 
 .non-essential-section-title {
@@ -431,7 +468,7 @@ onMounted(() => {
 }
 
 .final-total-section h3 {
-  color:rgb(17, 192, 232);
+  color: rgb(17, 192, 232);
   margin: 0;
   font-size: 20px;
 }
