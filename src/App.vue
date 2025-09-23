@@ -366,38 +366,6 @@ const finalTotal = computed(() => {
   return essentialTotal.value + nonEssentialTotal.value
 })
 
-onMounted(() => {
-  loadItems()
-
-  const setupSortable = (el, items, isEssential) => {
-    if (el) {
-      Sortable.create(el, {
-        handle: '.drag-handle',
-        animation: 150,
-        group: 'items',
-        onAdd({newIndex, oldIndex, from, to}) {
-          const fromItems = from.classList.contains('essential-table') ? essentialItems : nonEssentialItems
-          const toItems = to.classList.contains('essential-table') ? essentialItems : nonEssentialItems
-          const movedItem = fromItems.value[oldIndex]
-          fromItems.value.splice(oldIndex, 1)
-          toItems.value.splice(newIndex, 0, movedItem)
-        },
-        onEnd({newIndex, oldIndex, from, to}) {
-          if (from === to) {
-            const itemCopy = items.value[oldIndex]
-            items.value.splice(oldIndex, 1)
-            items.value.splice(newIndex, 0, itemCopy)
-          }
-        }
-      })
-    }
-  }
-
-  // 设置两个表格的拖拽功能
-  const tables = document.querySelectorAll('.el-table__body-wrapper tbody')
-  setupSortable(tables[0], essentialItems, true)
-  setupSortable(tables[1], nonEssentialItems, false)
-})
 </script>
 
 <style scoped>
