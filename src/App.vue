@@ -245,7 +245,7 @@ const saveItems = () => {
   // localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
   axios.post('https://redis.sxz799.asia/api/set', {
     key: STORAGE_KEY,
-    value: data
+    value: JSON.stringify(data)
   }).then(() => {
         ElMessage.success('数据已保存')
       })
