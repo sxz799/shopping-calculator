@@ -226,7 +226,7 @@ const loadItems = () => {
   // }
   axios.get('https://redis.sxz799.asia/api/get?key=' + STORAGE_KEY)
       .then(response => {
-        const {essential, nonEssential} = response.data.value
+        const {essential, nonEssential} = JSON.parse(response.data.value)
         essentialItems.value = essential || []
         nonEssentialItems.value = nonEssential || []
       })
