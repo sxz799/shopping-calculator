@@ -11,7 +11,7 @@
       </template>
 
       <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
           <el-card class="item-card">
             <template #header>
               <div class="card-header">
@@ -29,7 +29,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label="项目名称" prop="name" width="auto">
+              <el-table-column label="项目名称" prop="name" min-width="150px">
                 <template #default="{ row }">
                   <el-input v-model="row.name" placeholder="输入项目名称"></el-input>
                 </template>
@@ -81,7 +81,7 @@
           </el-card>
         </el-col>
 
-        <el-col :span="12">
+        <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
           <el-card class="item-card">
             <template #header>
               <div class="card-header">
@@ -99,7 +99,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label="项目名称" prop="name">
+              <el-table-column label="项目名称" prop="name" min-width="150px">
                 <template #default="{ row }">
                   <el-input v-model="row.name" placeholder="输入项目名称"></el-input>
                 </template>
