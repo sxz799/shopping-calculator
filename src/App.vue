@@ -11,17 +11,16 @@
       </template>
 
       <el-row :gutter="20">
-        <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+        <el-col >
           <el-card class="item-card">
             <template #header>
               <div class="card-header">
-                <div class="essential-section-title">必要项目</div>
-                <el-button type="success" @click="addItem(true)" plain>添加项目</el-button>
+                <el-button type="success" @click="addItem()" plain>添加项目</el-button>
               </div>
             </template>
             <el-table :data="essentialItems" row-key="id" class="items-table essential-table"
                       @sort-change="(column) => handleSortChange(essentialItems, column)">
-              <el-table-column width="40">
+              <el-table-column width="40px">
                 <template #default="{ row }">
                   <el-icon class="drag-handle">
                     <Rank/>
@@ -29,7 +28,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label="项目名称" prop="name" min-width="150px">
+              <el-table-column label="项目名称" prop="name" width="auto">
                 <template #default="{ row }">
                   <el-input v-model="row.name" placeholder="输入项目名称"></el-input>
                 </template>
@@ -41,27 +40,38 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label="数量" width="90">
+              <el-table-column label="位置" prop="location" sortable width="200px">
+                <template #default="{ row }">
+                  <el-input v-model="row.location" placeholder="输入位置"></el-input>
+                </template>
+              </el-table-column>
+
+              <el-table-column label="数量" width="80px">
                 <template #default="{ row }">
                   <el-input type="number" v-model="row.quantity" @change="validateNumber(row, 'quantity')"></el-input>
                 </template>
               </el-table-column>
 
-              <el-table-column label="单价" prop="price" sortable width="120">
+              <el-table-column label="单价" prop="price" sortable width="130px">
                 <template #default="{ row }">
                   <el-input type="number" v-model="row.price" @change="validateNumber(row, 'price')"></el-input>
                 </template>
               </el-table-column>
 
 
-              <el-table-column label="已购" width="60">
+              <el-table-column label="必要" width="60px">
+                <template #default="{ row }">
+                  <el-checkbox v-model="row.isEssential"></el-checkbox>
+                </template>
+              </el-table-column>
+              <el-table-column label="已购" width="60px">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.purchased"></el-checkbox>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" :width="80">
+              <el-table-column label="操作" >
                 <template #default="{ row, $index }">
-                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(true, $index)"
+                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem($index)"
                                  confirm-button-text="确定" cancel-button-text="取消">
                     <template #reference>
                       <el-button size="small" type="danger">删除</el-button>
@@ -70,87 +80,10 @@
                 </template>
               </el-table-column>
             </el-table>
-
-            <div class="section-total">
-              <h3>已支出: ¥{{ essentialTotal }}</h3>
-              <h3>未支出: ¥{{
-                  essentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0)
-                }}</h3>
-              <h3>全部总计: ¥{{ essentialItems.reduce((sum, item) => sum + (item.quantity * item.price), 0) }}</h3>
-            </div>
           </el-card>
         </el-col>
 
-        <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <el-card class="item-card">
-            <template #header>
-              <div class="card-header">
-                <div class="non-essential-section-title">非必要项目</div>
-                <el-button type="warning" @click="addItem(false)" plain>添加项目</el-button>
-              </div>
-            </template>
-            <el-table :data="nonEssentialItems" row-key="id" class="items-table non-essential-table"
-                      @sort-change="(column) => handleSortChange(nonEssentialItems, column)">
-              <el-table-column width="40">
-                <template #default="{ row }">
-                  <el-icon class="drag-handle">
-                    <Rank/>
-                  </el-icon>
-                </template>
-              </el-table-column>
 
-              <el-table-column label="项目名称" prop="name" min-width="150px">
-                <template #default="{ row }">
-                  <el-input v-model="row.name" placeholder="输入项目名称"></el-input>
-                </template>
-              </el-table-column>
-
-              <el-table-column label="产品型号" prop="model">
-                <template #default="{ row }">
-                  <el-input v-model="row.model" placeholder="输入产品型号"></el-input>
-                </template>
-              </el-table-column>
-
-              <el-table-column label="数量" width="90">
-                <template #default="{ row }">
-                  <el-input type="number" v-model="row.quantity" @change="validateNumber(row, 'quantity')"></el-input>
-                </template>
-              </el-table-column>
-
-              <el-table-column label="单价" prop="price" sortable width="120">
-                <template #default="{ row }">
-                  <el-input type="number" v-model="row.price" @change="validateNumber(row, 'price')"></el-input>
-                </template>
-              </el-table-column>
-
-
-              <el-table-column label="已购" width="60">
-                <template #default="{ row }">
-                  <el-checkbox v-model="row.purchased"></el-checkbox>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" :width="80">
-                <template #default="{ row, $index }">
-                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(false, $index)"
-                                 confirm-button-text="确定" cancel-button-text="取消">
-                    <template #reference>
-                      <el-button size="small" type="danger">删除</el-button>
-                    </template>
-                  </el-popconfirm>
-                </template>
-              </el-table-column>
-            </el-table>
-
-            <div class="section-total">
-              <h3>已支出: ¥{{ nonEssentialTotal }}</h3>
-              <h3>未支出: ¥{{
-                  nonEssentialItems.reduce((sum, item) => item.purchased ? sum : sum + (item.quantity * item.price), 0)
-                }}</h3>
-              <h3>全部总计: ¥{{ nonEssentialItems.reduce((sum, item) => sum + (item.quantity * item.price), 0) }}</h3>
-
-            </div>
-          </el-card>
-        </el-col>
       </el-row>
 
       <div class="section-divider"></div>
@@ -159,6 +92,26 @@
         <h3>全部总计: ¥{{ totalAllItems }}</h3>
         <h3>已支出总计: ¥{{ finalTotal }}</h3>
         <h3>未支出总计: ¥{{ totalUnpurchasedItems }}</h3>
+        <div class="essential-totals">
+          <h4>必要项目</h4>
+          <p>总计: ¥{{ essentialTotal }}</p>
+          <p>已支出: ¥{{ essentialPurchasedTotal }}</p>
+          <p>未支出: ¥{{ essentialUnpurchasedTotal }}</p>
+        </div>
+        <div class="non-essential-totals">
+          <h4>非必要项目</h4>
+          <p>总计: ¥{{ nonEssentialTotal }}</p>
+          <p>已支出: ¥{{ nonEssentialPurchasedTotal }}</p>
+          <p>未支出: ¥{{ nonEssentialUnpurchasedTotal }}</p>
+        </div>
+
+      </div>
+
+      <div class="location-totals-section">
+        <h3>各位置总计:</h3>
+        <div v-for="(total, location) in locationTotals" :key="location">
+          <p>{{ location || '未指定位置' }}: ¥{{ total }}</p>
+        </div>
       </div>
     </el-card>
   </div>
@@ -192,16 +145,30 @@ const validateItem = (item) => {
 }
 
 const essentialItems = ref([])
-const nonEssentialItems = ref([])
 
 // 处理表格排序
 const handleSortChange = (list, {prop, order}) => {
-  if (prop === 'price') {
+  if (prop === 'price' || prop === 'location' || prop === 'isEssential') {
     list.sort((a, b) => {
+      const valA = a[prop];
+      const valB = b[prop];
+
       if (order === 'ascending') {
-        return a.price - b.price;
+        if (typeof valA === 'string' && typeof valB === 'string') {
+          return valA.localeCompare(valB);
+        } else if (typeof valA === 'boolean' && typeof valB === 'boolean') {
+          return valA === valB ? 0 : (valA ? -1 : 1);
+        } else {
+          return valA - valB;
+        }
       } else if (order === 'descending') {
-        return b.price - a.price;
+        if (typeof valA === 'string' && typeof valB === 'string') {
+          return valB.localeCompare(valA);
+        } else if (typeof valA === 'boolean' && typeof valB === 'boolean') {
+          return valA === valB ? 0 : (valA ? 1 : -1);
+        } else {
+          return valB - valA;
+        }
       } else {
         return 0;
       }
@@ -218,17 +185,13 @@ const handleSort = (list, event) => {
 
 // 从本地存储加载数据
 const loadItems = () => {
-  // const savedData = localStorage.getItem(STORAGE_KEY)
-  // if (savedData) {
-  //   const { essential, nonEssential } = JSON.parse(savedData)
-  //   essentialItems.value = essential || []
-  //   nonEssentialItems.value = nonEssential || []
-  // }
   axios.get('https://redis.sxz799.asia/api/get?key=' + STORAGE_KEY)
       .then(response => {
-        const {essential, nonEssential} = JSON.parse(response.data.value)
-        essentialItems.value = essential || []
-        nonEssentialItems.value = nonEssential || []
+        const data = JSON.parse(response.data.value)
+        essentialItems.value = data.essential ? data.essential.map(item => ({
+          ...item,
+          isEssential: item.isEssential !== undefined ? item.isEssential : true
+        })) : []
       })
       .catch(error => {
         console.error('加载数据失败:', error)
@@ -239,15 +202,13 @@ const loadItems = () => {
 // 保存数据到本地存储
 const saveItems = () => {
   const data = {
-    essential: essentialItems.value,
-    nonEssential: nonEssentialItems.value
+    essential: essentialItems.value
   }
-  // localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
   axios.post('https://redis.sxz799.asia/api/set', {
     key: STORAGE_KEY,
     value: JSON.stringify(data)
   }).then(() => {
-    ElMessage.success('数据已保存')
+    // ElMessage.success('数据已保存') // 避免频繁提示
   }).catch(error => {
     console.error('保存数据失败:', error)
     ElMessage.error('保存数据失败，请稍后重试')
@@ -267,7 +228,7 @@ function debounce(fn, delay) {
 const debouncedSaveItems = debounce(saveItems, 2000)
 
 // 监听数据变化，自动保存
-watch([essentialItems, nonEssentialItems], debouncedSaveItems, {deep: true})
+watch(essentialItems, debounce(saveItems, 500), {deep: true})
 
 onMounted(() => {
   loadItems()
@@ -277,104 +238,117 @@ onMounted(() => {
     handle: '.drag-handle',
     onEnd: (event) => handleSort(essentialItems.value, event)
   })
-  // 初始化非必要项目拖拽
-  new Sortable(document.querySelector('.non-essential-table .el-table__body > tbody'), {
-    animation: 150,
-    handle: '.drag-handle',
-    onEnd: (event) => handleSort(nonEssentialItems.value, event)
-  })
+
 })
 
-const addItem = (isEssential) => {
+const addItem = () => {
   const newItem = {
     id: Date.now(),
     name: '',
     model: '',
-    quantity: 1.00,
-    price: 0.00,
-    purchased: false // 新增的购买状态
+    location: '',
+    quantity: 1,
+    price: 0,
+    purchased: false,
+    isEssential: true // Default to essential
   }
-
-  if (isEssential) {
-    essentialItems.value.push(newItem)
-    ElMessage.success('已添加必要项目')
-  } else {
-    nonEssentialItems.value.push(newItem)
-    ElMessage.success('已添加非必要项目')
-  }
+  essentialItems.value.push(newItem)
+  ElMessage.success('项目添加成功')
 }
 
-const removeItem = (isEssential, index) => {
-  if (isEssential) {
-    essentialItems.value.splice(index, 1)
-  } else {
-    nonEssentialItems.value.splice(index, 1)
-  }
-  ElMessage.success('删除成功')
+const removeItem = (index) => {
+  essentialItems.value.splice(index, 1)
+  ElMessage.success('项目删除成功')
 }
 
 const clearAll = () => {
-  ElMessageBox.confirm('此操作将清空所有项目，是否继续?', '提示', {
+  ElMessageBox.confirm('确定清空所有项目吗？', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   }).then(() => {
     essentialItems.value = []
-    nonEssentialItems.value = []
-    ElMessage.success('已清空所有项目')
+    ElMessage.success('所有项目已清空')
   }).catch(() => {
-    ElMessage.info('已取消清空操作')
+    ElMessage.info('已取消清空')
   })
 }
 
 const essentialTotal = computed(() => {
-  return essentialItems.value.reduce((sum, item) => {
-    if (item.purchased) {
-      return sum + (item.quantity * item.price)
-    } else {
-      return sum
-    }
-  }, 0)
+  return essentialItems.value
+      .filter(item => item.isEssential)
+      .reduce((sum, item) => sum + item.quantity * item.price, 0)
+      .toFixed(2)
 })
 
 const nonEssentialTotal = computed(() => {
-  return nonEssentialItems.value.reduce((sum, item) => {
-    if (item.purchased) {
-      return sum + (item.quantity * item.price)
-    } else {
-      return sum
-    }
-  }, 0)
-})
-
-// 计算所有项目的总价
-const totalAllItems = computed(() => {
-  const essentialAll = essentialItems.value.reduce((sum, item) => sum + (item.quantity * item.price), 0)
-  const nonEssentialAll = nonEssentialItems.value.reduce((sum, item) => sum + (item.quantity * item.price), 0)
-  return essentialAll + nonEssentialAll
-})
-
-// 计算未购买项目的总价
-const totalUnpurchasedItems = computed(() => {
-  const essentialUnpurchased = essentialItems.value.reduce((sum, item) => {
-    if (!item.purchased) {
-      return sum + (item.quantity * item.price)
-    } else {
-      return sum
-    }
-  }, 0)
-  const nonEssentialUnpurchased = nonEssentialItems.value.reduce((sum, item) => {
-    if (!item.purchased) {
-      return sum + (item.quantity * item.price)
-    } else {
-      return sum
-    }
-  }, 0)
-  return essentialUnpurchased + nonEssentialUnpurchased
+  return essentialItems.value
+      .filter(item => !item.isEssential)
+      .reduce((sum, item) => sum + item.quantity * item.price, 0)
+      .toFixed(2)
 })
 
 const finalTotal = computed(() => {
-  return essentialTotal.value + nonEssentialTotal.value
+  return essentialItems.value
+      .filter(item => item.purchased)
+      .reduce((sum, item) => sum + item.quantity * item.price, 0)
+      .toFixed(2)
+})
+
+const totalAllItems = computed(() => {
+  return essentialItems.value
+      .reduce((sum, item) => sum + item.quantity * item.price, 0)
+      .toFixed(2)
+})
+
+const totalUnpurchasedItems = computed(() => {
+  return essentialItems.value
+      .filter(item => !item.purchased)
+      .reduce((sum, item) => sum + item.quantity * item.price, 0)
+      .toFixed(2)
+})
+
+const essentialPurchasedTotal = computed(() => {
+  return essentialItems.value
+      .filter(item => item.isEssential && item.purchased)
+      .reduce((sum, item) => sum + item.quantity * item.price, 0)
+      .toFixed(2)
+})
+
+const essentialUnpurchasedTotal = computed(() => {
+  return essentialItems.value
+      .filter(item => item.isEssential && !item.purchased)
+      .reduce((sum, item) => sum + item.quantity * item.price, 0)
+      .toFixed(2)
+})
+
+const nonEssentialPurchasedTotal = computed(() => {
+  return essentialItems.value
+      .filter(item => !item.isEssential && item.purchased)
+      .reduce((sum, item) => sum + item.quantity * item.price, 0)
+      .toFixed(2)
+})
+
+const nonEssentialUnpurchasedTotal = computed(() => {
+  return essentialItems.value
+      .filter(item => !item.isEssential && !item.purchased)
+      .reduce((sum, item) => sum + item.quantity * item.price, 0)
+      .toFixed(2)
+})
+
+const locationTotals = computed(() => {
+  const totals = {}
+  essentialItems.value.forEach(item => {
+    const location = item.location || '未指定位置'
+    if (!totals[location]) {
+      totals[location] = 0
+    }
+    totals[location] += item.quantity * item.price
+  })
+  for (const location in totals) {
+    totals[location] = totals[location].toFixed(2)
+  }
+  return totals
 })
 
 </script>
@@ -406,17 +380,7 @@ const finalTotal = computed(() => {
   margin: 20px 0 10px;
 }
 
-.essential-section-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: rgb(255, 0, 0);
-}
 
-.non-essential-section-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #409EFF;
-}
 
 .section-divider {
   height: 1px;
@@ -444,8 +408,47 @@ const finalTotal = computed(() => {
 
 .final-total-section h3 {
   color: rgb(17, 192, 232);
-  margin: 0;
+  margin: 10px 0;
   font-size: 20px;
+}
+
+.essential-totals,
+.non-essential-totals {
+  border: 1px solid #EBEEF5;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.essential-totals h4,
+.non-essential-totals h4 {
+  color: #409EFF;
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.essential-totals p,
+.non-essential-totals p {
+  margin: 2px 0;
+  color: #606266;
+}
+
+.location-totals-section {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #EBEEF5;
+}
+
+.location-totals-section h3 {
+  color: #606266;
+  margin-bottom: 10px;
+}
+
+.location-totals-section p {
+  margin: 5px 0;
+  color: #606266;
 }
 
 .drag-handle {

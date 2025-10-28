@@ -98,6 +98,15 @@ button:focus-visible {
 
 .items-table {
   width: 100% !important;
+  overflow-x: auto; /* 允许表格在小屏幕上水平滚动 */
+}
+
+.el-table .el-table__cell {
+  padding: 8px 0; /* 调整单元格内边距 */
+}
+
+.el-table-column {
+  min-width: 80px; /* 确保列有最小宽度 */
 }
 
 .section-total h3,
@@ -133,7 +142,7 @@ button:focus-visible {
   }
 
   .el-table-column {
-    min-width: 100px;
+    min-width: 80px; /* 确保列有最小宽度 */
   }
 
   .calculator-container {
