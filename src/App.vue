@@ -3,10 +3,8 @@
     <el-card class="calculator-card">
       <template #header>
         <div class="card-header">
-          <h2>购物计算器</h2>
-          <div class="header-buttons">
-            <el-button type="danger" @click="clearAll" plain>清空所有</el-button>
-          </div>
+          <h2>装修计算器</h2>
+        
         </div>
       </template>
 
@@ -59,12 +57,12 @@
               </el-table-column>
 
 
-              <el-table-column label="必要" width="60px">
+              <el-table-column label="必要" sortable width="60px">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.isEssential"></el-checkbox>
                 </template>
               </el-table-column>
-              <el-table-column label="已购" width="60px">
+              <el-table-column label="已购" sortable width="60px">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.purchased"></el-checkbox>
                 </template>
@@ -261,18 +259,6 @@ const removeItem = (index) => {
   ElMessage.success('项目删除成功')
 }
 
-const clearAll = () => {
-  ElMessageBox.confirm('确定清空所有项目吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(() => {
-    essentialItems.value = []
-    ElMessage.success('所有项目已清空')
-  }).catch(() => {
-    ElMessage.info('已取消清空')
-  })
-}
 
 const essentialTotal = computed(() => {
   return essentialItems.value
@@ -368,10 +354,6 @@ const locationTotals = computed(() => {
   align-items: center;
 }
 
-.header-buttons {
-  display: flex;
-  gap: 10px;
-}
 
 .section-header {
   display: flex;
