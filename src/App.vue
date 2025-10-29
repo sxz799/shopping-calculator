@@ -4,12 +4,11 @@
       <template #header>
         <div class="card-header">
           <h2>装修计算器</h2>
-        
         </div>
       </template>
 
-      <el-row :gutter="20">
-        <el-col >
+      <el-row>
+        <el-col>
           <el-card class="item-card">
             <template #header>
               <div class="card-header">
@@ -19,7 +18,7 @@
             <el-table :data="essentialItems" row-key="id" class="items-table essential-table"
                       @sort-change="(column) => handleSortChange(essentialItems, column)">
               <el-table-column width="40px">
-                <template #default="{ row }">
+                <template #default>
                   <el-icon class="drag-handle">
                     <Rank/>
                   </el-icon>
@@ -28,19 +27,19 @@
 
               <el-table-column label="项目名称" prop="name" width="auto">
                 <template #default="{ row }">
-                  <el-input v-model="row.name" placeholder="输入项目名称"></el-input>
+                  <el-input v-model="row.name"></el-input>
                 </template>
               </el-table-column>
 
               <el-table-column label="产品型号" prop="model" width="auto">
                 <template #default="{ row }">
-                  <el-input v-model="row.model" placeholder="输入产品型号"></el-input>
+                  <el-input v-model="row.model"></el-input>
                 </template>
               </el-table-column>
 
               <el-table-column label="位置" prop="location" sortable width="200px">
                 <template #default="{ row }">
-                  <el-input v-model="row.location" placeholder="输入位置"></el-input>
+                  <el-input v-model="row.location"></el-input>
                 </template>
               </el-table-column>
 
@@ -56,19 +55,18 @@
                 </template>
               </el-table-column>
 
-
-              <el-table-column label="必要" sortable width="60px">
+              <el-table-column label="必要" width="80px">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.isEssential"></el-checkbox>
                 </template>
               </el-table-column>
-              <el-table-column label="已购" sortable width="60px">
+              <el-table-column label="已购" width="80px">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.purchased"></el-checkbox>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" >
-                <template #default="{ row, $index }">
+              <el-table-column label="操作">
+                <template #default="{ $index }">
                   <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem($index)"
                                  confirm-button-text="确定" cancel-button-text="取消">
                     <template #reference>
@@ -80,8 +78,6 @@
             </el-table>
           </el-card>
         </el-col>
-
-
       </el-row>
 
       <div class="section-divider"></div>
@@ -102,7 +98,6 @@
           <p>已支出: ¥{{ nonEssentialPurchasedTotal }}</p>
           <p>未支出: ¥{{ nonEssentialUnpurchasedTotal }}</p>
         </div>
-
       </div>
 
       <div class="location-totals-section">
@@ -117,11 +112,11 @@
 
 <script setup>
 import {computed, onMounted, ref, watch} from 'vue'
-import {ElMessage, ElMessageBox} from 'element-plus'
+import {ElMessage} from 'element-plus'
 import {Rank} from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
 import Sortable from 'sortablejs'
-import axios from "axios";
+import axios from "axios"
 
 const STORAGE_KEY = 'shopping-calculator-items'
 
@@ -134,45 +129,36 @@ const validateNumber = (item, field) => {
   return true
 }
 
-const validateItem = (item) => {
-  if (!item.name) {
-    ElMessage.warning('项目名称为必填项')
-    return false
-  }
-  return true
-}
-
 const essentialItems = ref([])
 
 // 处理表格排序
 const handleSortChange = (list, {prop, order}) => {
   if (prop === 'price' || prop === 'location' || prop === 'isEssential') {
     list.sort((a, b) => {
-      const valA = a[prop];
-      const valB = b[prop];
+      const valA = a[prop]
+      const valB = b[prop]
 
       if (order === 'ascending') {
         if (typeof valA === 'string' && typeof valB === 'string') {
-          return valA.localeCompare(valB);
+          return valA.localeCompare(valB)
         } else if (typeof valA === 'boolean' && typeof valB === 'boolean') {
-          return valA === valB ? 0 : (valA ? -1 : 1);
+          return valA === valB ? 0 : (valA ? -1 : 1)
         } else {
-          return valA - valB;
+          return valA - valB
         }
       } else if (order === 'descending') {
         if (typeof valA === 'string' && typeof valB === 'string') {
-          return valB.localeCompare(valA);
+          return valB.localeCompare(valA)
         } else if (typeof valA === 'boolean' && typeof valB === 'boolean') {
-          return valA === valB ? 0 : (valA ? 1 : -1);
+          return valA === valB ? 0 : (valA ? 1 : -1)
         } else {
-          return valB - valA;
+          return valB - valA
         }
-      } else {
-        return 0;
       }
-    });
+      return 0
+    })
   }
-};
+}
 
 // 处理拖动排序
 const handleSort = (list, event) => {
@@ -184,17 +170,17 @@ const handleSort = (list, event) => {
 // 从本地存储加载数据
 const loadItems = () => {
   axios.get('https://redis.sxz799.asia/api/get?key=' + STORAGE_KEY)
-      .then(response => {
-        const data = JSON.parse(response.data.value)
-        essentialItems.value = data.essential ? data.essential.map(item => ({
-          ...item,
-          isEssential: item.isEssential !== undefined ? item.isEssential : true
-        })) : []
-      })
-      .catch(error => {
-        console.error('加载数据失败:', error)
-        ElMessage.error('加载数据失败，请稍后重试')
-      })
+    .then(response => {
+      const data = JSON.parse(response.data.value)
+      essentialItems.value = data.essential ? data.essential.map(item => ({
+        ...item,
+        isEssential: item.isEssential !== undefined ? item.isEssential : true
+      })) : []
+    })
+    .catch(error => {
+      console.error('加载数据失败:', error)
+      ElMessage.error('加载数据失败，请稍后重试')
+    })
 }
 
 // 保存数据到本地存储
@@ -205,8 +191,6 @@ const saveItems = () => {
   axios.post('https://redis.sxz799.asia/api/set', {
     key: STORAGE_KEY,
     value: JSON.stringify(data)
-  }).then(() => {
-    // ElMessage.success('数据已保存') // 避免频繁提示
   }).catch(error => {
     console.error('保存数据失败:', error)
     ElMessage.error('保存数据失败，请稍后重试')
@@ -223,8 +207,6 @@ function debounce(fn, delay) {
   }
 }
 
-const debouncedSaveItems = debounce(saveItems, 2000)
-
 // 监听数据变化，自动保存
 watch(essentialItems, debounce(saveItems, 500), {deep: true})
 
@@ -236,7 +218,6 @@ onMounted(() => {
     handle: '.drag-handle',
     onEnd: (event) => handleSort(essentialItems.value, event)
   })
-
 })
 
 const addItem = () => {
@@ -248,7 +229,7 @@ const addItem = () => {
     quantity: 1,
     price: 0,
     purchased: false,
-    isEssential: true // Default to essential
+    isEssential: true
   }
   essentialItems.value.push(newItem)
   ElMessage.success('项目添加成功')
@@ -259,67 +240,67 @@ const removeItem = (index) => {
   ElMessage.success('项目删除成功')
 }
 
-
-const essentialTotal = computed(() => {
+// 计算总计
+const totalAllItems = computed(() => {
   return essentialItems.value
-      .filter(item => item.isEssential)
-      .reduce((sum, item) => sum + item.quantity * item.price, 0)
-      .toFixed(2)
-})
-
-const nonEssentialTotal = computed(() => {
-  return essentialItems.value
-      .filter(item => !item.isEssential)
-      .reduce((sum, item) => sum + item.quantity * item.price, 0)
-      .toFixed(2)
+    .reduce((sum, item) => sum + item.quantity * item.price, 0)
+    .toFixed(2)
 })
 
 const finalTotal = computed(() => {
   return essentialItems.value
-      .filter(item => item.purchased)
-      .reduce((sum, item) => sum + item.quantity * item.price, 0)
-      .toFixed(2)
-})
-
-const totalAllItems = computed(() => {
-  return essentialItems.value
-      .reduce((sum, item) => sum + item.quantity * item.price, 0)
-      .toFixed(2)
+    .filter(item => item.purchased)
+    .reduce((sum, item) => sum + item.quantity * item.price, 0)
+    .toFixed(2)
 })
 
 const totalUnpurchasedItems = computed(() => {
   return essentialItems.value
-      .filter(item => !item.purchased)
-      .reduce((sum, item) => sum + item.quantity * item.price, 0)
-      .toFixed(2)
+    .filter(item => !item.purchased)
+    .reduce((sum, item) => sum + item.quantity * item.price, 0)
+    .toFixed(2)
+})
+
+const essentialTotal = computed(() => {
+  return essentialItems.value
+    .filter(item => item.isEssential)
+    .reduce((sum, item) => sum + item.quantity * item.price, 0)
+    .toFixed(2)
 })
 
 const essentialPurchasedTotal = computed(() => {
   return essentialItems.value
-      .filter(item => item.isEssential && item.purchased)
-      .reduce((sum, item) => sum + item.quantity * item.price, 0)
-      .toFixed(2)
+    .filter(item => item.isEssential && item.purchased)
+    .reduce((sum, item) => sum + item.quantity * item.price, 0)
+    .toFixed(2)
 })
 
 const essentialUnpurchasedTotal = computed(() => {
   return essentialItems.value
-      .filter(item => item.isEssential && !item.purchased)
-      .reduce((sum, item) => sum + item.quantity * item.price, 0)
-      .toFixed(2)
+    .filter(item => item.isEssential && !item.purchased)
+    .reduce((sum, item) => sum + item.quantity * item.price, 0)
+    .toFixed(2)
+})
+
+const nonEssentialTotal = computed(() => {
+  return essentialItems.value
+    .filter(item => !item.isEssential)
+    .reduce((sum, item) => sum + item.quantity * item.price, 0)
+    .toFixed(2)
 })
 
 const nonEssentialPurchasedTotal = computed(() => {
   return essentialItems.value
-      .filter(item => !item.isEssential && item.purchased)
-      .reduce((sum, item) => sum + item.quantity * item.price, 0)
-      .toFixed(2)
+    .filter(item => !item.isEssential && item.purchased)
+    .reduce((sum, item) => sum + item.quantity * item.price, 0)
+    .toFixed(2)
 })
 
 const nonEssentialUnpurchasedTotal = computed(() => {
   return essentialItems.value
-      .filter(item => !item.isEssential && !item.purchased)
-      .reduce((sum, item) => sum + item.quantity * item.price, 0)
-      .toFixed(2)
+    .filter(item => !item.isEssential && !item.purchased)
+    .reduce((sum, item) => sum + item.quantity * item.price, 0)
+    .toFixed(2)
 })
 
 const locationTotals = computed(() => {
@@ -336,7 +317,6 @@ const locationTotals = computed(() => {
   }
   return totals
 })
-
 </script>
 
 <style scoped>
@@ -354,16 +334,6 @@ const locationTotals = computed(() => {
   align-items: center;
 }
 
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 20px 0 10px;
-}
-
-
-
 .section-divider {
   height: 1px;
   background-color: #EBEEF5;
@@ -372,13 +342,6 @@ const locationTotals = computed(() => {
 
 .items-table {
   margin-bottom: 20px;
-}
-
-.section-total {
-  text-align: right;
-  margin-top: 10px;
-  font-size: 16px;
-  color: #606266;
 }
 
 .final-total-section {
@@ -439,17 +402,5 @@ const locationTotals = computed(() => {
 
 .el-select {
   width: 100%;
-}
-
-.is-error .el-input__wrapper {
-  box-shadow: 0 0 0 1px var(--el-color-danger) inset !important;
-}
-
-.el-table__empty-block {
-  min-height: 100px;
-}
-
-.el-table__empty-text {
-  color: var(--el-text-color-secondary);
 }
 </style>
