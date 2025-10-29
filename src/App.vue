@@ -13,9 +13,26 @@
             <template #header>
               <div class="card-header">
                 <el-button type="success" @click="addItem()" plain>添加项目</el-button>
+                <div class="filter-options">
+                  <span class="filter-label">必要性:</span>
+                  <el-select v-model="essentialFilter" style="width: 120px; margin-right: 10px;">
+                    <el-option label="全部" value="all"></el-option>
+                    <el-option label="必要" value="essential"></el-option>
+                    <el-option label="非必要" value="nonEssential"></el-option>
+                  </el-select>
+                  <span class="filter-label">购买状态:</span>
+                  <el-select v-model="purchaseFilter" style="width: 120px;">
+                    <el-option label="全部" value="all"></el-option>
+                    <el-option label="已购" value="purchased"></el-option>
+                    <el-option label="未购" value="unpurchased"></el-option>
+                  </el-select>
+                  <div v-if="showFilteredTotal" class="filtered-total">
+                    <span>当前筛选金额: ¥{{ filteredTotal }}</span>
+                  </div>
+                </div>
               </div>
             </template>
-            <el-table :data="essentialItems" row-key="id" class="items-table essential-table"
+            <el-table :data="filteredItems" row-key="id" class="items-table essential-table"
                       @sort-change="(column) => handleSortChange(essentialItems, column)">
               <el-table-column width="40px">
                 <template #default>
@@ -55,12 +72,12 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label="必要" width="80px">
+              <el-table-column label="是否必要" width="80px">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.isEssential"></el-checkbox>
                 </template>
               </el-table-column>
-              <el-table-column label="已购" width="80px">
+              <el-table-column label="购买状态" width="80px">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.purchased"></el-checkbox>
                 </template>
@@ -119,6 +136,10 @@ import Sortable from 'sortablejs'
 import axios from "axios"
 
 const STORAGE_KEY = 'shopping-calculator-items'
+
+// 过滤选项
+const essentialFilter = ref('all')
+const purchaseFilter = ref('all')
 
 const validateNumber = (item, field) => {
   if (item[field] < 0) {
@@ -309,6 +330,33 @@ const nonEssentialUnpurchasedTotal = computed(() => {
     .toFixed(2)
 })
 
+// 过滤后的商品列表
+const filteredItems = computed(() => {
+  return essentialItems.value.filter(item => {
+    // 必要性过滤
+    if (essentialFilter.value === 'essential' && !item.isEssential) return false;
+    if (essentialFilter.value === 'nonEssential' && item.isEssential) return false;
+    
+    // 购买状态过滤
+    if (purchaseFilter.value === 'purchased' && !item.purchased) return false;
+    if (purchaseFilter.value === 'unpurchased' && item.purchased) return false;
+    
+    return true;
+  });
+});
+
+// 是否显示过滤金额
+const showFilteredTotal = computed(() => {
+  return essentialFilter.value !== 'all' || purchaseFilter.value !== 'all';
+});
+
+// 当前过滤项目的总金额
+const filteredTotal = computed(() => {
+  return filteredItems.value
+    .reduce((sum, item) => sum + item.quantity * item.price, 0)
+    .toFixed(2);
+});
+
 const locationTotals = computed(() => {
   const totals = {}
   essentialItems.value.forEach(item => {
@@ -338,6 +386,23 @@ const locationTotals = computed(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.filter-options {
+  display: flex;
+  align-items: center;
+}
+
+.filter-label {
+  margin-right: 5px;
+  font-size: 14px;
+  color: #606266;
+}
+
+.filtered-total {
+  margin-left: 15px;
+  font-weight: bold;
+  color: #409EFF;
 }
 
 .section-divider {
