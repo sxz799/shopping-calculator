@@ -135,8 +135,14 @@ const essentialItems = ref([])
 const handleSortChange = (list, {prop, order}) => {
   if (prop === 'price' || prop === 'location' || prop === 'isEssential') {
     list.sort((a, b) => {
-      const valA = a[prop]
-      const valB = b[prop]
+      let valA = a[prop]
+      let valB = b[prop]
+      
+      // 确保price字段使用数值比较
+      if (prop === 'price') {
+        valA = Number(valA)
+        valB = Number(valB)
+      }
 
       if (order === 'ascending') {
         if (typeof valA === 'string' && typeof valB === 'string') {
@@ -167,7 +173,7 @@ const handleSort = (list, event) => {
   list.splice(newIndex, 0, movedItem)
 }
 
-// 从本地存储加载数据
+// 加载数据
 const loadItems = () => {
   axios.get('https://redis.sxz799.asia/api/get?key=' + STORAGE_KEY)
     .then(response => {
@@ -183,7 +189,7 @@ const loadItems = () => {
     })
 }
 
-// 保存数据到本地存储
+// 保存数据
 const saveItems = () => {
   const data = {
     essential: essentialItems.value
@@ -229,7 +235,7 @@ const addItem = () => {
     quantity: 1,
     price: 0,
     purchased: false,
-    isEssential: true
+    isEssential: false
   }
   essentialItems.value.push(newItem)
   ElMessage.success('项目添加成功')
