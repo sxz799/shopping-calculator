@@ -250,13 +250,13 @@ onMounted(() => {
 const addItem = () => {
   const newItem = {
     id: Date.now(),
-    name: '',
+    name: '新增项目',
     model: '',
     location: '',
     quantity: 1,
     price: 0,
-    purchased: false,
-    isEssential: false
+    purchased: purchaseFilter.value === 'purchased',
+    isEssential: essentialFilter.value === 'essential'
   }
   essentialItems.value.push(newItem)
   ElMessage.success('项目添加成功')
