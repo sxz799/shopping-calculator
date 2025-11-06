@@ -33,15 +33,19 @@
               </div>
             </template>
             <el-table :data="filteredItems" row-key="id" class="items-table essential-table"
-                      @sort-change="(column) => handleSortChange(essentialItems, column)">
+              @sort-change="(column) => handleSortChange(essentialItems, column)">
               <el-table-column width="40px">
                 <template #default>
                   <el-icon class="drag-handle">
-                    <Rank/>
+                    <Rank />
                   </el-icon>
                 </template>
               </el-table-column>
-
+              <el-table-column label="序号" align="center" width="60px">
+                <template #default="{ $index }">
+                  <span>{{ $index + 1 }}</span>
+                </template>
+              </el-table-column>
               <el-table-column label="项目名称" prop="name" width="auto">
                 <template #default="{ row }">
                   <el-input v-model="row.name"></el-input>
@@ -72,20 +76,20 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label="是否必要" width="80px">
+              <el-table-column label="是否必要" align="center" width="80px">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.isEssential"></el-checkbox>
                 </template>
               </el-table-column>
-              <el-table-column label="购买状态" width="80px">
+              <el-table-column label="购买状态" align="center" width="80px">
                 <template #default="{ row }">
                   <el-checkbox v-model="row.purchased"></el-checkbox>
                 </template>
               </el-table-column>
               <el-table-column label="操作">
-                <template #default="{ $index }">
-                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem($index)"
-                                 confirm-button-text="确定" cancel-button-text="取消">
+                <template #default="{ row }">
+                  <el-popconfirm title="确定删除此项目吗?" @confirm="removeItem(row.id)" confirm-button-text="确定"
+                    cancel-button-text="取消">
                     <template #reference>
                       <el-button size="small" type="danger">删除</el-button>
                     </template>
@@ -128,9 +132,9 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref, watch} from 'vue'
-import {ElMessage} from 'element-plus'
-import {Rank} from '@element-plus/icons-vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { ElMessage } from 'element-plus'
+import { Rank } from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
 import Sortable from 'sortablejs'
 import axios from "axios"
@@ -153,12 +157,12 @@ const validateNumber = (item, field) => {
 const essentialItems = ref([])
 
 // 处理表格排序
-const handleSortChange = (list, {prop, order}) => {
+const handleSortChange = (list, { prop, order }) => {
   if (prop === 'price' || prop === 'location' || prop === 'isEssential') {
     list.sort((a, b) => {
       let valA = a[prop]
       let valB = b[prop]
-      
+
       // 确保price字段使用数值比较
       if (prop === 'price') {
         valA = Number(valA)
@@ -189,7 +193,7 @@ const handleSortChange = (list, {prop, order}) => {
 
 // 处理拖动排序
 const handleSort = (list, event) => {
-  const {oldIndex, newIndex} = event
+  const { oldIndex, newIndex } = event
   const movedItem = list.splice(oldIndex, 1)[0]
   list.splice(newIndex, 0, movedItem)
 }
@@ -226,7 +230,7 @@ const saveItems = () => {
 
 function debounce(fn, delay) {
   let timer = null
-  return function(...args) {
+  return function (...args) {
     clearTimeout(timer)
     timer = setTimeout(() => {
       fn.apply(this, args)
@@ -235,7 +239,7 @@ function debounce(fn, delay) {
 }
 
 // 监听数据变化，自动保存
-watch(essentialItems, debounce(saveItems, 500), {deep: true})
+watch(essentialItems, debounce(saveItems, 500), { deep: true })
 
 onMounted(() => {
   loadItems()
@@ -262,9 +266,15 @@ const addItem = () => {
   ElMessage.success('项目添加成功')
 }
 
-const removeItem = (index) => {
-  essentialItems.value.splice(index, 1)
-  ElMessage.success('项目删除成功')
+const removeItem = (id) => {
+  console.log(id)
+  const index = essentialItems.value.findIndex(item => item.id === id)
+  if (index !== -1) {
+    essentialItems.value.splice(index, 1)
+    ElMessage.success('项目删除成功')
+  } else {
+    ElMessage.error('项目不存在')
+  }
 }
 
 // 计算总计
@@ -336,11 +346,11 @@ const filteredItems = computed(() => {
     // 必要性过滤
     if (essentialFilter.value === 'essential' && !item.isEssential) return false;
     if (essentialFilter.value === 'nonEssential' && item.isEssential) return false;
-    
+
     // 购买状态过滤
     if (purchaseFilter.value === 'purchased' && !item.purchased) return false;
     if (purchaseFilter.value === 'unpurchased' && item.purchased) return false;
-    
+
     return true;
   });
 });
